@@ -35,8 +35,12 @@ editorNamespace.on("connection", (socket) => {
 
     // somehow we will get the projectId from frontend;
     let projectId = socket.handshake.query['projectId'];
+    let activeTabPath = socket.handshake.query['activeTabPath'];
 
-    console.log("Project id received after connection", projectId);
+    const roomName = `${projectId}_${activeTabPath}`;
+    socket.join(roomName);
+
+    console.log("Project id received after connection", projectId,activeTabPath);
 
     if(projectId) {
         var watcher = chokidar.watch(`./projects/${projectId}`, {
@@ -53,7 +57,7 @@ editorNamespace.on("connection", (socket) => {
         });
     }
 
-    handleEditorSocketEvents(socket, editorNamespace);
+    handleEditorSocketEvents(socket, editorNamespace ,roomName);
 
     // socket.on("disconnect", async () => {
     //     await watcher.close();

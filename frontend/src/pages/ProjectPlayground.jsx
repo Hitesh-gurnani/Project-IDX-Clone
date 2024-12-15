@@ -7,6 +7,7 @@ import { useTreeStructureStore } from "../store/treeStructureStore";
 import { useEditorSocketStore } from "../store/editorSocketStore";
 import { io } from "socket.io-client";
 import { BrowserTerminal } from "../components/molecules/BrowserTerminal/BrowserTerminal";
+import { useActiveFileTabStore } from "../store/activeFileTabStore";
 
 export const ProjectPlayground = () => {
 
@@ -16,19 +17,22 @@ export const ProjectPlayground = () => {
 
     const { setEditorSocket } = useEditorSocketStore();
 
+    const { activeFileTab } = useActiveFileTabStore();
+
     useEffect(() => {
         if(projectIdFromUrl) {
             setProjectId(projectIdFromUrl);
         
             const editorSocketConn = io(`${import.meta.env.VITE_BACKEND_URL}/editor`, {
                 query: {
-                    projectId: projectIdFromUrl
+                    projectId: projectIdFromUrl,
+                    activeTabPath: activeFileTab?.path
                 }
             });
             setEditorSocket(editorSocketConn);
         }
         
-    }, [setProjectId, projectIdFromUrl, setEditorSocket]);
+    }, [setProjectId, projectIdFromUrl, setEditorSocket,activeFileTab?.path]);
 
     return (
         <>
